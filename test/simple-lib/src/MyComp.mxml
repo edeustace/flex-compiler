@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+    width="400" height="300"
+    xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Metadata>
+		[ResourceBundle("resources")]
+	</mx:Metadata>
+    <mx:Style source="styles/style.css"/>
+
+    <mx:Label text="{resourceManager.getString('resources', 'hello')}"/>
+</mx:Canvas>

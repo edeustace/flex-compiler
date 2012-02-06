@@ -1,0 +1,9 @@
+require 'flex-compiler'
+
+task :default => [:compile]
+
+task :compile do
+	
+	FlexCompiler.compc
+
+end

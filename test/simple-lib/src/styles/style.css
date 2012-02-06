@@ -1,0 +1,8 @@
+/* CSS file */
+
+.searchButton
+{
+	up-skin: Embed("/images/searchButton.png");
+	over-skin: Embed("/images/searchButton.png");
+	down-skin: Embed("/images/searchButton.png");
+}
