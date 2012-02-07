@@ -5,11 +5,12 @@ A simple gem for building flex applications and libraries. It generates compc an
     gem install flex-compiler
 # Usage
     require 'flex-compiler'
-    FlexCompiler.compc #will look for a file flex-compiler-config.yml
-    FlexCompiler.compc "my-config.yml" #will load my-config.yml
-    FlexCompiler.compc {:flex_home => "/path/to/flex/sdk" } #you can pass in a hash too
+    FlexCompiler.compile #will look for a file flex-compiler-config.yml
+    FlexCompiler.compile "my-config.yml" #will load my-config.yml
+    FlexCompiler.compile {:flex_home => "/path/to/flex/sdk" } #you can pass in a hash too
 
 ## Options
+* application - the name of the application (adding this invokes mxmlc instead of compc)
 * flex_home
 * src_dir (default: src)
 * output_dir (default: bin)
