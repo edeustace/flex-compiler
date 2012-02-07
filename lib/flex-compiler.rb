@@ -1,5 +1,5 @@
 require "flex-compiler/version"
-require "flex-compiler/compc_options"
+require "flex-compiler/compiler_options"
 require "yaml"
 
 module FlexCompiler
@@ -24,7 +24,7 @@ module FlexCompiler
   # * *Raises* :
   #   - +ArgumentError+ -> if any value is nil or negative
   #
-  def self.compc( options  = nil)
+  def self.compile(options = nil)
 
     puts "options: #{options} #{options.class}"
 
@@ -47,60 +47,88 @@ module FlexCompiler
       opts[:output_folder] = yml["output_folder"] unless yml["output_folder"].nil?
       opts[:libs] = yml["libs"] unless yml["libs"].nil?
       opts[:test_mode] = yml["test_mode"] unless yml["test_mode"].nil?
+      opts[:application] = yml["application"] unless yml["application"].nil?
     end
    
-    compc = Compc.new( CompcOptions.new opts )
-    compc.build
+    generator = CommandGenerator.new( CompilerOptions.new opts )
+    command = generator.command
+
+    puts "-- command --"
+    puts command
+    puts "-- end command --"
+
+    if( opts[:test_mode] )
+      return
+    end
+
+    puts "executing command"
+    result = `#{command}`
+    puts result
   end
 
 
 
-  class Compc
+  class CommandGenerator
 
+    PLAYER_GLOBAL = "playerglobal"
 
     def initialize(options)
         @options = options
     end
 
-    def build
-      compc = "#{@options.flex_home}\\bin\\compc.exe"
-      puts "compc path: #{compc}"
+    def command
+
+      bin = "#{@options.flex_home}\\bin\\"
+
+      if( application.nil? )
+        exe = "#{bin}compc.exe"
+      else
+        exe = "#{bin}mxmlc.exe"
+      end
+
+      puts "exe path: #{exe}"
       sources = "-source-path #{src_dir}"
-      puts "locale_dir: #{locale_dir}"
       if( File.exists? locale_dir )
         locale_string = "-locale #{discover_locale}"
         include_bundles = "-include-resource-bundles #{discover_rb}"
-        sources += " #{add_locale_to_source_path}"
+        sources += " #{locale_dir}/{locale}"
       end
 
-      args = [locale_string,
+      args = [
+              source_path_overlap,
+              locale_string,
               include_bundles,
-              include_assets,
-              include_stylesheets,
               framework_library_paths,
               lib_paths,
               sources,
-              classes,
+              dump_config,
               output
               ]
-      command = "\"#{compc}\" #{args.join(' ')}"
       
-      puts "final command "
-      puts "#{command}"
-      puts "--"
-
-      if( @options.test_mode )
-        return command
+      if( compc? )
+        #the ordering is important here:
+        args = [include_stylesheets, include_assets, classes ] + args
+      else
+        args << "#{src_dir}/#{application}.mxml"
       end
-      result = `#{command}`
-      
-      puts result
+        
+      command = "\"#{exe}\" #{args.join(' ')}"
+      command
     end
 
     private
 
+    def source_path_overlap
+      "-allow-source-path-overlap=true"
+    end
+
+    def compc?; application.nil?; end
+
+    def application; @options.application; end
+
     def output
-       "-output=\"#{output_folder}/#{output_name}.swc\""
+      type = compc? ? "swc" : "swf"
+      "-output=\"#{output_folder}/#{output_name}.#{type}\""
     end
 
     def output_folder
@@ -121,7 +149,10 @@ module FlexCompiler
 
     def libs; @options.libs; end
 
-
+    def dump_config
+      "-dump-config #{output_folder}/#{output_name}-config.xml"
+    end
+    
     def classes
       files = Dir["#{src_dir}/**/*.{as,mxml}"]
 
@@ -189,7 +220,7 @@ module FlexCompiler
         return ""
       end
 
-      name_paths = assets.map{ |e| NamePath.new(e)}
+      name_paths = assets.map{ |e| NamePath.new(src_dir, e)}
 
       output = ""
       name_paths.each{ |np| output << "#{directive} #{np.name_path} " }
@@ -205,9 +236,15 @@ module FlexCompiler
         raise "Error: can't find framework swcs"
       end
 
-      directive = "-external-library-path+="
+      directive = compc? ? "-external-library-path+=" : "-library-path+="
       output = ""
-      frameworks_swcs.each{ |swc| output << "#{directive}\"#{swc}\" "}
+      frameworks_swcs.each{ |swc| 
+        if( swc.include? "#{PLAYER_GLOBAL}.swc")
+          output << "-external-library-path+=\"#{swc}\" "
+        else
+          output << "#{directive}\"#{swc}\" "
+        end
+      }
       output
     end
 
@@ -217,19 +254,21 @@ module FlexCompiler
         return ""
       end
 
-      
       output = ""
       libs.each{ |l| 
         puts "l: #{l}"
         if( l.end_with? "swc")
+          f = File.open(l)
+
           #its a swc add it directly
-          output << "-external-library-path+=#{l} "
+          output << "-library-path+=\"#{l}\" "
         else
           puts "inspecting libs folder"
           #its a folder add all the swcs in the folder
           swcs = Dir["#{l}/**/*.swc"]
           swcs.each{ |swc|
-            output << "-external-library-path+=#{swc} "
+            f = File.open(swc)
+            output << "-library-path+=#{File.expand_path(f)} "
           }
         end
       }
@@ -241,16 +280,27 @@ module FlexCompiler
 
     attr_reader :path
 
-    def initialize(path)
+    def initialize(src_dir, path)
       @path = path
+      @src_dir = src_dir
     end
 
     def name 
-      File.basename(@path)
+      
+      src = starts_with?("/", @src_dir) ? @src_dir[1, @src_dir.length] : @src_dir
+      out = path.gsub( "#{src}", "")
+      puts "NamePath:name: #{out}, #{path}"
+      out
     end
-
+    
     def name_path
       "#{name} #{path}"
+    end
+
+    private
+    def starts_with?(prefix, str)
+      prefix = prefix.to_s
+      str[0, prefix.length] == prefix
     end
   end
 

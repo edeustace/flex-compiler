@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application 
+    layout="vertical"
+    minHeight="600"
+    minWidth="955"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:local="*">
+    <mx:Metadata>
+		[ResourceBundle("simpleProject")]
+		[ResourceBundle("resources")]
+	</mx:Metadata>
+    <mx:Style source="/styles/style.css"/>
+    <mx:Style source="/styles/simple-project-styles.css"/>
+    <local:SimpleClass id="simpleClass"/>
+    <mx:Label text="Hello"/>
+    <mx:Label text="{simpleClass.message}"/>
+    <mx:Label text="{simpleClass.resourceMessage}"/>
+    <mx:Label text="{resourceManager.getString('simpleProject', 'hello')}"/>
+    <mx:Label text="{resourceManager.getString('resources', 'resource.message')}"/>
+
+    <mx:Image source="{simpleClass.image}"/>
+
+    <mx:Image source="@Embed('images/add_icon_20.png')"/>
+    <mx:Button styleName="searchButton"/>
+
+    <mx:Button styleName="otherButton"/>
+</mx:Application>

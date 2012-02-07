@@ -1,8 +1,14 @@
-  class CompcOptions
+  class CompilerOptions
     # provides a set of defaults
     # a hash of options
     def initialize( options )
       @options = options
+    end
+
+
+    # required
+    def flex_home
+      @options[:flex_home]
     end
 
     def output_folder
@@ -21,16 +27,16 @@
       @options[:locale_dir] || "locale"
     end
 
-    def flex_home
-      @options[:flex_home]
-    end
-
     def test_mode
       @options[:test_mode] || false
     end
     
     def libs
       @options[:libs] || "libs"  
+    end
+
+    def application
+      @options[:application] || nil
     end
 
 

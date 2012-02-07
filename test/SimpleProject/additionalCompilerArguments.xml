@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<flex-config>
+    <compiler>
+        <allow-source-path-overlap>true</allow-source-path-overlap>
+        <source-path>
+            <path-element>locale/{locale}</path-element>
+        </source-path>
+        <locale>
+            <locale-element>en_US</locale-element>
+            <locale-element>de_DE</locale-element>
+        </locale>
+    </compiler>
+
+</flex-config>

@@ -1,0 +1,5 @@
+application: SimpleProject
+flex_home: C:/Program Files (x86)/Adobe/Adobe Flash Builder 4.5/sdks/3.4.1.l.c
+libs:
+    - ../simple-lib/bin/simple-lib.swc
+output_name: simple-project

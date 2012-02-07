@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
   <includeClasses>
-    <classEntry path="SimpleClass"/>
     <classEntry path="MyComp"/>
+    <classEntry path="SimpleClass"/>
   </includeClasses>
-  <includeResources/>
+  <includeResources>
+    <resourceEntry destPath="images/iconEmployeeOn.png" sourcePath="images/iconEmployeeOn.png"/>
+    <resourceEntry destPath="images/searchButton.png" sourcePath="images/searchButton.png"/>
+    <resourceEntry destPath="styles/style.css" sourcePath="styles/style.css"/>
+  </includeResources>
   <namespaceManifests/>
 </flexLibProperties>
