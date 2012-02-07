@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.name        = "flex-compiler"
   s.version     = FlexCompiler::VERSION
   s.authors     = ["ed eustace"]
-  s.email       = ["eeustace@adobe.com"]
+  s.email       = ["ed.eustace@gmail.com"]
   s.homepage    = ""
   s.summary     = "A simple api for using flex sdk command line tools"
   s.description = ".."
