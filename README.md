@@ -37,6 +37,6 @@ There a currently alot of limitations:
 
 * Only executes compc.exe or mxmlc.exe (aka won't run on mac/linux)
 * Only allows a small set of parameters - the complete option set for these commands is far greater.
-* There is now package management or dependency resolution a la flex-mojos, its just plain old add swc to libs
+* There is no package management or dependency resolution a la flex-mojos, its just plain old add swc to libs
 
 
