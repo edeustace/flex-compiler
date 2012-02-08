@@ -18,7 +18,7 @@ For a library that means the only thing you need to pass in is the ````flex_home
 
 You pass these options in with a Hash or with some yml.
 
-* flex_home - (this path to the flex sdk - it will use compc/mxmlc and all the framework libs from this path) (NO DEFAULT - must be provided)
+* flex_home - (path to the flex sdk - it will use compc/mxmlc and all the framework libs from this path) (NO DEFAULT - must be provided)
 * application - (default: nil - must be provided if you wish to compile with mxmlc)
 * src_dir - (default: src)
 * output_dir - (default: bin)
