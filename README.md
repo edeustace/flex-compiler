@@ -25,7 +25,7 @@ You pass these options in with a Hash or with some yml.
 * output_name - (default: the name of the folder that contains the project)
 * locale_dir - (default: locale)
 * ignore_files - a list of files to ignore (default: []) This can be useful if someone is using an ````mx:Script```` or ````include```` directive in the source code
-* test_mode - if true will only output the command - not execute it (default: false)
+* test_mode - if true will only output the command, if false will output the command and execute it (default: false)
 
 ## Example Yaml
     flex_home: C:/Program Files (x86)/Adobe/Adobe Flash Builder 4.5/sdks/3.4.1.
