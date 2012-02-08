@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
   s.version     = FlexCompiler::VERSION
   s.authors     = ["ed eustace"]
   s.email       = ["ed.eustace@gmail.com"]
-  s.homepage    = ""
+  s.homepage    = "http://github.com/edeustace/flex-compiler"
   s.summary     = "A simple api for using flex sdk command line tools"
-  s.description = ".."
+  s.description = "Generates compc and mxmlc commands using sensible defaults - allowing only the user to only pass in a minimum number of arguments"
 
   s.rubyforge_project = "flex-compiler"
 
