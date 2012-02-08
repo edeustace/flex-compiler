@@ -32,11 +32,15 @@
     end
     
     def libs
-      @options[:libs] || "libs"  
+      @options[:libs] || ["libs"]  
     end
 
     def application
       @options[:application] || nil
+    end
+
+    def ignore_files
+      @options[:ignore_files] || []
     end
 
 

@@ -26,18 +26,14 @@ module FlexCompiler
   #
   def self.compile(options = nil)
 
-    puts "options: #{options} #{options.class}"
 
     if( options.nil? )
       options = "flex-compiler-config.yml"
     end
 
-
     if( options.class == "Hash")
-      puts "hash"
       opts = options
     elsif( options.class.to_s == "String" )
-      puts "loading yaml config.."
       yml = YAML.load_file( options )
       opts = Hash.new
       opts[:flex_home] = yml["flex_home"] unless yml["flex_home"].nil?
@@ -48,6 +44,7 @@ module FlexCompiler
       opts[:libs] = yml["libs"] unless yml["libs"].nil?
       opts[:test_mode] = yml["test_mode"] unless yml["test_mode"].nil?
       opts[:application] = yml["application"] unless yml["application"].nil?
+      opts[:ignore_files] = yml["ignore_files"] unless yml["ignore_files"].nil?
     end
    
     generator = CommandGenerator.new( CompilerOptions.new opts )
@@ -61,9 +58,11 @@ module FlexCompiler
       return
     end
 
-    puts "executing command"
     result = `#{command}`
     puts result
+
+    raise "errror executing process" unless $?.to_i == 0
+
   end
 
 
@@ -86,7 +85,6 @@ module FlexCompiler
         exe = "#{bin}mxmlc.exe"
       end
 
-      puts "exe path: #{exe}"
       sources = "-source-path #{src_dir}"
       if( File.exists? locale_dir )
         locale_string = "-locale #{discover_locale}"
@@ -112,11 +110,18 @@ module FlexCompiler
         args << "#{src_dir}/#{application}.mxml"
       end
         
+      add_output_folder
+
       command = "\"#{exe}\" #{args.join(' ')}"
       command
     end
 
     private
+
+    def add_output_folder
+      FileUtils.mkdir_p output_folder unless File.exists? output_folder
+    end
+
 
     def source_path_overlap
       "-allow-source-path-overlap=true"
@@ -150,7 +155,7 @@ module FlexCompiler
     def libs; @options.libs; end
 
     def dump_config
-      "-dump-config #{output_folder}/#{output_name}-config.xml"
+      "-dump-config \"#{output_folder}/#{output_name}-config.xml\""
     end
     
     def classes
@@ -162,23 +167,37 @@ module FlexCompiler
 
       out = "-include-classes "
 
-      files.map! { |f|
-        f.gsub!("src/", "")
-        f.gsub!("/", ".")
-        f.gsub!(".as", "")
-        f.gsub!(".mxml", "")
-        f
-      }
+      class_array = []
 
-      "#{out} #{files.join ' '}"
+      files.each{ |f| 
+        if( !is_ignore_file(f) )
+          f.gsub!("src/", "")
+          f.gsub!("/", ".")
+          f.gsub!(".as", "")
+          f.gsub!(".mxml", "")
+          class_array << f
+        end
+      }
+    
+      "#{out} #{class_array.join ' '}"
     end
+
+    def is_ignore_file( file )
+      
+      ignore_files.each{ |ignore| 
+        if( file.include? ignore )
+          return true
+        end
+      }
+      false
+    end
+
+    def ignore_files; @options.ignore_files; end
 
     # create the locale argument by inspecting the contents of the locale folder.
     # @return a locale string - eg: "en_US,de_DE"
     def discover_locale
-      puts "locale option : #{locale_dir}"
       locales = Dir["#{locale_dir}/*"]
-      puts "locales: #{locales}"
       locales.map! { |e| File.basename(e) }
       locales.join(" ")
     end
@@ -229,7 +248,6 @@ module FlexCompiler
 
     def framework_library_paths
       home = @options.flex_home.gsub("\\", "/")
-      puts "home: #{home}"
       frameworks_swcs = Dir["#{home}/frameworks/libs/**/*.swc"]
 
       if frameworks_swcs.nil? || frameworks_swcs.empty?
@@ -256,19 +274,17 @@ module FlexCompiler
 
       output = ""
       libs.each{ |l| 
-        puts "l: #{l}"
         if( l.end_with? "swc")
           f = File.open(l)
 
           #its a swc add it directly
           output << "-library-path+=\"#{l}\" "
         else
-          puts "inspecting libs folder"
           #its a folder add all the swcs in the folder
           swcs = Dir["#{l}/**/*.swc"]
           swcs.each{ |swc|
             f = File.open(swc)
-            output << "-library-path+=#{File.expand_path(f)} "
+            output << "-library-path+=\"#{File.expand_path(f)}\" "
           }
         end
       }
