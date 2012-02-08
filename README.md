@@ -12,7 +12,9 @@ A simple gem for building flex applications and libraries. It generates compc an
     FlexCompiler.compile {:flex_home => "/path/to/flex/sdk" } #you can pass in a hash too
 
 ## Options
-* application - the name of the application (adding this invokes mxmlc instead of compc)
+
+You pass these options in with a Hash or with some yml.
+
 * flex_home - (this path to the flex sdk - it will use compc/mxmlc and all the framework libs from this path) (NO DEFAULT - must be provided)
 * application - (default: nil - must be provided if you wish to compile with mxmlc)
 * src_dir - (default: src)
@@ -22,10 +24,19 @@ A simple gem for building flex applications and libraries. It generates compc an
 * ignore_files - a list of files to ignore (default: []) This can be useful if someone is using an ````mx:Script```` or ````include```` directive in the source code
 * test_mode - if true will only output the command - not execute it (default: false)
 
-
+## Example Yaml
+    flex_home: C:/Program Files (x86)/Adobe/Adobe Flash Builder 4.5/sdks/3.4.1.
+    output_folder: blah
+    locale_dir: src/locale
+    libs:
+      - ../mylib/bin/mylib.swc
+      - ../myotherllib/bin/myotherlib.swc
+  
 ## Limitations
 There a currently alot of limitations:
+
 * Only executes compc.exe or mxmlc.exe (aka won't run on mac/linux)
 * Only allows a small set of parameters - the complete option set for these commands is far greater.
+* There is now package management or dependency resolution a la flex-mojos, its just plain old add swc to libs
 
 
