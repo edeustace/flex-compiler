@@ -1,5 +1,8 @@
 # Introduction
-A simple gem for building flex applications and libraries. It generates compc and mxmlc commands, based on sensible defaults and by inspecting the project structure for others. The goal the user only needs to pass in the bare minimum to get a successful compile command. For a library that means the only thing you need to pass in is the ````flex_home```` parameter, for an mxmlc you only need to pass in ````flex_home```` and ````application````.
+A simple gem for building flex applications and libraries. 
+It generates compc and mxmlc commands, based on sensible defaults and by inspecting the project structure for others. 
+The goal being that the user only needs to pass in the bare minimum to get a successful compile command. 
+For a library that means the only thing you need to pass in is the ````flex_home```` parameter, for an mxmlc you only need to pass in ````flex_home```` and ````application````.
 
 
 
